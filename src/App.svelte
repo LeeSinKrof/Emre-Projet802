@@ -3,9 +3,10 @@
     import Map from "./Map.svelte";
     import Icon from '@iconify/svelte';
     import {getGeoCode} from "../service/Geocode";
-    import {getVehicleList} from "../service/Service";
     import Vehicle from "./Vehicle.svelte";
     import Input from "./Input.svelte";
+    import {getDirections} from "../service/Direction";
+    import {success, warning, error} from "./notyf";
 
     let vehicleList: any = [];
     let selectedVehicle: any = null;
@@ -28,6 +29,7 @@
         searchResultsEnd = [];
         showCityList = true;
     }
+
     function selectVehicle(vehicle: any) {
         if (selectedVehicle && selectedVehicle.id === vehicle.id) {
             selectedVehicle = null;
@@ -48,15 +50,11 @@
             } else {
                 selectedStartCity = selectedCity;
             }
-
-            console.log(`Selected ${searchType} City Coordinates: ${selectedCity.geometry.coordinates}`);
         }
 
         searchType === 'end' ? (searchEnd = cityName) : (searchStart = cityName);
         showCityList = !showCityList;
     }
-
-
 
 
     async function searchInput(inputType: string) {
@@ -83,6 +81,74 @@
             console.log(`City Names (${inputType}):`, cityNames);
         }
     }
+
+    import axios from 'axios';
+    import {getVehicleList} from "../service/Vehicle";
+
+
+    async function calculateItineraire() {
+        if (!selectedStartCity || !selectedEndCity) {
+            warning('Veuillez sélectionner les villes de départ et d\'arrivée.');
+            return;
+        }
+
+        if (selectedVehicle === null) {
+            warning('Veuillez sélectionner un véhicule.');
+            return;
+        }
+
+        const startCoordinates = selectedStartCity.geometry.coordinates;
+        const endCoordinates = selectedEndCity.geometry.coordinates;
+
+        const directions = await getDirections({coord1: startCoordinates, coord2: endCoordinates});
+
+        const distance = directions ? (directions.features[0].properties.summary.distance) / 1000 : 0;
+        const duration = directions ? (directions.features[0].properties.summary.duration) / 60 : 0;
+
+        const autonomy = selectedVehicle ? selectedVehicle.range.chargetrip_range.worst : 300;
+        const chargingTime = selectedVehicle ? selectedVehicle.connectors[0].time : 30;
+        console.log(autonomy);
+        console.log(chargingTime);
+
+        try {
+            const soapResponse = await axios.post('http://localhost:8000', `
+            <soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/"
+                               xmlns:web="travel">
+               <soapenv:Header/>
+               <soapenv:Body>
+                  <web:calculate_travel_time>
+                     <web:distance>${distance}</web:distance>
+                     <web:autonomy>${autonomy}</web:autonomy>
+                     <web:charging_time>${chargingTime}</web:charging_time>
+                  </web:calculate_travel_time>
+               </soapenv:Body>
+            </soapenv:Envelope>`, {
+                headers: {
+                    'Content-Type': 'text/xml',
+                },
+            });
+
+            const parser = new DOMParser();
+            const xmlDoc: any = parser.parseFromString(soapResponse.data, 'text/xml');
+            const resultElements = xmlDoc.getElementsByTagNameNS('travel', 'calculate_travel_timeResult');
+
+            if (resultElements.length > 0) {
+                const travelTime = parseFloat(resultElements[0].textContent);
+                console.log('Travel Time:', travelTime);
+                success('Calcul de l\'itinéraire réussi.');
+
+            } else {
+                console.error('Error parsing SOAP response: calculate_travel_timeResult not found.');
+                error('Erreur lors du calcul de l\'itinéraire.');
+
+            }
+        } catch (e) {
+            console.error('Error calculating travel time:', e);
+            error('Erreur lors du calcul de l\'itinéraire.');
+        }
+    }
+
+
 
 
 
@@ -130,9 +196,11 @@
             bind:searchResultsEnd={searchResultsEnd}
             selectCity={selectCity}
             searchInput={searchInput}
+            calculateItinerary="{calculateItineraire}"
     />
 
-    <Map selectedStartCity={selectedStartCity} selectedEndCity={selectedEndCity}  />
+
+    <Map selectedStartCity={selectedStartCity} selectedEndCity={selectedEndCity}/>
 </main>
 
 <style>

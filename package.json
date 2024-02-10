@@ -28,12 +28,17 @@
     "@maptiler/sdk": "^1.2.1",
     "@turf/turf": "^6.5.0",
     "@urql/core": "^4.2.2",
+    "cors": "^2.8.5",
     "fade": "^0.2.0",
     "fastify": "^4.25.2",
+    "get-stream": "^8.0.1",
     "graphql-tag": "^2.12.6",
     "mapbox-gl": "^3.1.0",
-    "require": "^2.4.20",
+    "notyf": "^3.10.0",
     "rippleui": "^1.12.1",
-    "turf": "^3.0.14"
+    "soap": "^1.0.0",
+    "subscriptions-transport-ws": "^0.11.0",
+    "turf": "^3.0.14",
+    "xmldom": "^0.6.0"
   }
 }

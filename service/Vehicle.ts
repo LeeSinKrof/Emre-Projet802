@@ -1,6 +1,8 @@
-/* eslint-disable max-len */
 import { createClient, fetchExchange, cacheExchange } from '@urql/core';
 import qql from 'graphql-tag';
+
+
+
 
 
 
@@ -18,8 +20,6 @@ const client = createClient({
     exchanges: [fetchExchange, cacheExchange],
 });
 
-
-
 export const vehicleListQuery = qql`
 query vehicleList($page: Int, $size: Int, $search: String) {
   vehicleList(
@@ -36,18 +36,50 @@ query vehicleList($page: Int, $size: Int, $search: String) {
     }
     id
     naming {
-      make
-      model
-      chargetrip_version
+        make
+        model
+        version
+        edition
+        chargetrip_version
+    }
+    adapters {
+        standard
+        power
+        time
+        speed
+    }
+    battery {
+        usable_kwh
+        full_kwh
+    }
+    range {
+        chargetrip_range {
+            best
+            worst
+        }
     }
     media {
-      image {
-        thumbnail_url
-      }
+        image {
+            id
+            type
+                url
+            height
+            width
+            thumbnail_url
+            thumbnail_height
+            thumbnail_width
+        }
     }
-  }
+    routing {
+        fast_charging_support
+    }
+ }
 }
 `;
+
+
+
+
 
 export async function getVehicleList(option: { page?: number, size?: number, search?: string } = {}) {
     const { page = 1, size = 30, search = '' } = option;

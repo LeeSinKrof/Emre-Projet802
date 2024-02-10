@@ -8,6 +8,10 @@
     export let searchResultsEnd: any[];
     export let selectCity: (cityName: string, isEnd?: boolean) => void;
     export let searchInput: (inputType: string) => void;
+    
+    export let calculateItinerary: () => void;
+
+
 </script>
 
 <div class="flex flex-row items-start p-4 z-20 h-1/6 ml-4 space-x-4">
@@ -63,5 +67,11 @@
                 {/each}
             </div>
         {/if}
+
+    </div>
+    <div class="mt-4">
+        <button on:click={calculateItinerary} class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+            Calculer Itinéraire
+        </button>
     </div>
 </div>

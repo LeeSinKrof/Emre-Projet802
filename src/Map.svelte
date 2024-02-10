@@ -4,20 +4,28 @@
     import "@maptiler/sdk/dist/maptiler-sdk.css";
     import * as maptilersdk from '@maptiler/sdk';
 
+
     import colors from "tailwindcss/colors";
     import {getDirections} from "../service/Direction";
+    import {getChargingStationsAtIntervals} from "../service/Station";
 
     let map: any;
     let mapContainer: any;
     let startCityMarker: any;
     let endCityMarker: any;
+    let chargingStations = [];
+    let chargingStationMarkers: any = []; // Store markers for charging stations
+
+
 
     export let selectedStartCity: any;
     export let selectedEndCity: any;
 
     config.apiKey = 'jVmLD1SYxCeMk5vViw0q';
 
-    onMount(() => {
+
+
+    onMount(async () => {
         const initialState = {lng: 1, lat: 46, zoom: 6};
 
         map = new Map({
@@ -55,19 +63,10 @@
             startCityMarker.setLngLat(selectedStartCity.geometry.coordinates);
             endCityMarker.setLngLat(selectedEndCity.geometry.coordinates);
 
-            map.once('load', () => {
-                map.addLayer({
-                    'id': 'directions_route',
-                    'type': 'line',
-                    'source': 'directions_route',
-                    'layout': {},
-                    'paint': {
-                        'line-color': '#3887be',
-                        'line-width': 4
-                    }
-                });
-            });
+
             const directionsData = await getDirections({coord1: startMarkerCoord, coord2: endMarkerCoord});
+
+            console.log(directionsData);
 
             const existingLayer = map.getLayer('directions_route');
             if (!existingLayer) {
@@ -86,15 +85,30 @@
             if (directionsRouteSource) {
                 directionsRouteSource.setData({type: 'Feature', geometry: directionsData.features[0].geometry});
                 const bounds = new maptilersdk.LngLatBounds(startMarkerCoord, endMarkerCoord);
-                map.fitBounds(bounds, {padding: 50});
+                map.fitBounds(bounds, {padding: 10});
             } else {
                 console.warn("Directions route source not found.");
             }
+
+
+            chargingStationMarkers.forEach((marker: any) => marker.remove());
+            chargingStationMarkers = [];
+
+            chargingStations = await getChargingStationsAtIntervals(directionsData.features[0].geometry.coordinates, 200);
+
+            chargingStations.forEach((station: any) => {
+                const marker = new Marker({color: colors.green[400]}).setLngLat(station).addTo(map);
+                chargingStationMarkers.push(marker);
+            });
         }
+
+
     });
 
     onDestroy(() => {
         map.remove();
+        chargingStationMarkers.forEach((marker:any) => marker.remove());
+
     });
 
 </script>

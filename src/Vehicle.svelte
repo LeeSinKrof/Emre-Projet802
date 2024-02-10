@@ -1,13 +1,18 @@
-<!-- Vehicle.svelte -->
 <script lang="ts">
     import Icon from "@iconify/svelte";
 
     export let vehicle: any;
     export let onSelect: () => void;
     export let selectedVehicle: any;
+
+    let showDetails = false;
+
+    function toggleDetails() {
+        showDetails = !showDetails;
+    }
 </script>
 
-<div class="mb-4 flex p-2 rounded-md bg-amber-300 relative">
+<div class={selectedVehicle && selectedVehicle.id === vehicle?.id ? "mb-4 flex p-2 rounded-md bg-blue-300 relative hover:cursor-pointer": "mb-4 flex p-2 rounded-md bg-amber-300 relative hover:cursor-pointer"} on:click={onSelect}>
     {#if vehicle}
         <img src={vehicle.media?.image?.thumbnail_url} alt="image du véhicule" class="h-14 object-cover rounded-md mr-2 bg-amber-100"/>
         <div>
@@ -15,15 +20,15 @@
             <p class="text-sm mb-1">{vehicle.naming?.make} </p>
         </div>
         <span class="tooltip tooltip-left tooltip-secondary absolute top-0 right-0 mt-2 mr-2"
-              data-tooltip="Détails" on:click={onSelect}>
+              data-tooltip="Détails" on:click={toggleDetails}>
           <label class="rounded-md hover:cursor-pointer">
-            <Icon class="h-4 w-4" icon="tabler:info-octagon"/>
+            <Icon class="h-5 w-5" icon="tabler:info-octagon"/>
           </label>
         </span>
     {/if}
 </div>
 
-{#if selectedVehicle && selectedVehicle.id === vehicle?.id}
+{#if showDetails && selectedVehicle && selectedVehicle.id === vehicle?.id}
     <div class="text-black text-center">
         <h2 class="text-md font-semibold">Détails</h2>
         <div class="divider"></div>
@@ -36,14 +41,12 @@
                 speed,
                 power
             }}
-                <li>Standard: {standard}</li>
-                <li>Max Electric Power: {max_electric_power}</li>
-                <li>Time: {time}</li>
-                <li>Speed: {speed}</li>
-                <li>Power: {power}</li>
-                {#if standard.length > 1}
-                    <div class="divider"></div>
-                {/if}
+                    <li>Standard: {standard}</li>
+                    <li>Max Electric Power: {max_electric_power}</li>
+                    <li>Time: {time}</li>
+                    <li>Speed: {speed}</li>
+                    <li>Power: {power}</li>
+                    <li>Range: {selectedVehicle.range.chargetrip_range.worst}</li>
             {/each}
         </ul>
     </div>
