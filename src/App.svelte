@@ -7,6 +7,8 @@
     import Input from "./Input.svelte";
     import {getDirections} from "../service/Direction";
     import {success, warning, error} from "./notyf";
+    import axios from 'axios';
+    import {getVehicleList} from "../service/Vehicle";
 
     let vehicleList: any = [];
     let selectedVehicle: any = null;
@@ -18,11 +20,14 @@
     let selectedStartCity: any = null;
     let selectedEndCity: any = null;
     let isSidebarExpanded = false;
+    let distanceCity: number = 0;
+    let travelTimeCity: number = 0;
+
+
 
     function toggleSidebar() {
         isSidebarExpanded = !isSidebarExpanded;
     }
-
 
     function resetSearchResults() {
         searchResultsStart = [];
@@ -37,7 +42,6 @@
             selectedVehicle = vehicle;
         }
     }
-
 
     function selectCity(cityName: string, isEnd: boolean = false) {
         const searchType = isEnd ? 'end' : 'start';
@@ -56,44 +60,28 @@
         showCityList = !showCityList;
     }
 
-
     async function searchInput(inputType: string) {
         resetSearchResults();
 
         let searchData;
-        let startCity;
-        let endCity;
 
         if (inputType === 'start') {
             searchData = await getGeoCode(searchStart);
             searchResultsStart = searchData;
-            startCity = searchData && searchData.length > 0 ? searchData[0] : null;
-
         } else if (inputType === 'end') {
             searchData = await getGeoCode(searchEnd);
             searchResultsEnd = searchData;
-            endCity = searchData && searchData.length > 0 ? searchData[0] : null;
-
-        }
-
-        if (searchData && searchData.length > 0) {
-            const cityNames = searchData.map((result: any) => result.properties.name);
-            console.log(`City Names (${inputType}):`, cityNames);
         }
     }
 
-    import axios from 'axios';
-    import {getVehicleList} from "../service/Vehicle";
-
-
     async function calculateItineraire() {
         if (!selectedStartCity || !selectedEndCity) {
-            warning('Veuillez sélectionner les villes de départ et d\'arrivée.');
+            warning("Veuillez sélectionner les villes de départ et d'arrivée.");
             return;
         }
 
         if (selectedVehicle === null) {
-            warning('Veuillez sélectionner un véhicule.');
+            warning("Veuillez sélectionner un véhicule.");
             return;
         }
 
@@ -103,15 +91,12 @@
         const directions = await getDirections({coord1: startCoordinates, coord2: endCoordinates});
 
         const distance = directions ? (directions.features[0].properties.summary.distance) / 1000 : 0;
-        const duration = directions ? (directions.features[0].properties.summary.duration) / 60 : 0;
+        distanceCity = Math.trunc(distance);
 
-        const autonomy = selectedVehicle ? selectedVehicle.range.chargetrip_range.worst : 300;
-        const chargingTime = selectedVehicle ? selectedVehicle.connectors[0].time : 30;
-        console.log(autonomy);
-        console.log(chargingTime);
+        const autonomy = selectedVehicle.range.chargetrip_range.best;
+        const chargingTime = selectedVehicle.connectors[0].time / 60;
 
-        try {
-            const soapResponse = await axios.post('http://localhost:8000', `
+        const xml =  `
             <soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/"
                                xmlns:web="travel">
                <soapenv:Header/>
@@ -122,7 +107,10 @@
                      <web:charging_time>${chargingTime}</web:charging_time>
                   </web:calculate_travel_time>
                </soapenv:Body>
-            </soapenv:Envelope>`, {
+            </soapenv:Envelope>`;
+
+        try {
+            const soapResponse = await axios.post('http://localhost:8000', xml, {
                 headers: {
                     'Content-Type': 'text/xml',
                 },
@@ -134,23 +122,20 @@
 
             if (resultElements.length > 0) {
                 const travelTime = parseFloat(resultElements[0].textContent);
+                travelTimeCity = travelTime;
                 console.log('Travel Time:', travelTime);
-                success('Calcul de l\'itinéraire réussi.');
+                success("Calcul de l'itinéraire réussi.");
 
             } else {
                 console.error('Error parsing SOAP response: calculate_travel_timeResult not found.');
-                error('Erreur lors du calcul de l\'itinéraire.');
+                error("Erreur lors du calcul de l'itinéraire.");
 
             }
         } catch (e) {
             console.error('Error calculating travel time:', e);
-            error('Erreur lors du calcul de l\'itinéraire.');
+            error("Erreur lors du calcul de l'itinéraire.");
         }
     }
-
-
-
-
 
     onMount(async () => {
         //vehicleList = await getVehicleList();
@@ -197,10 +182,12 @@
             selectCity={selectCity}
             searchInput={searchInput}
             calculateItinerary="{calculateItineraire}"
+            distance="{distanceCity}"
+            travelTime="{travelTimeCity}"
     />
 
-
-    <Map selectedStartCity={selectedStartCity} selectedEndCity={selectedEndCity}/>
+    <Map selectedStartCity={selectedStartCity} selectedEndCity={selectedEndCity} selectedVehicle={selectedVehicle}
+    />
 </main>
 
 <style>

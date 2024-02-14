@@ -48,10 +48,6 @@ query vehicleList($page: Int, $size: Int, $search: String) {
         time
         speed
     }
-    battery {
-        usable_kwh
-        full_kwh
-    }
     range {
         chargetrip_range {
             best
@@ -69,9 +65,6 @@ query vehicleList($page: Int, $size: Int, $search: String) {
             thumbnail_height
             thumbnail_width
         }
-    }
-    routing {
-        fast_charging_support
     }
  }
 }

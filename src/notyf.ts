@@ -26,7 +26,7 @@ export const notyf = new Notyf({
             }
         },
         {
-            type: 'error', // Add a new type for red color
+            type: 'error',
             background: 'red',
             icon: {
                 className: 'material-symbols:error-rounded',

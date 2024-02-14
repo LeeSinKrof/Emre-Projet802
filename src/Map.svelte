@@ -8,18 +8,18 @@
     import colors from "tailwindcss/colors";
     import {getDirections} from "../service/Direction";
     import {getChargingStationsAtIntervals} from "../service/Station";
+    import {chargingStationsStore} from "../service/store";
 
     let map: any;
     let mapContainer: any;
     let startCityMarker: any;
     let endCityMarker: any;
-    let chargingStations = [];
-    let chargingStationMarkers: any = []; // Store markers for charging stations
-
-
+    let chargingStationMarkers: any[] = [];
+    let chargingStations: any[] = [];
 
     export let selectedStartCity: any;
     export let selectedEndCity: any;
+    export let selectedVehicle: any;
 
     config.apiKey = 'jVmLD1SYxCeMk5vViw0q';
 
@@ -94,7 +94,9 @@
             chargingStationMarkers.forEach((marker: any) => marker.remove());
             chargingStationMarkers = [];
 
-            chargingStations = await getChargingStationsAtIntervals(directionsData.features[0].geometry.coordinates, 200);
+            chargingStations = await getChargingStationsAtIntervals(directionsData.features[0].geometry.coordinates, selectedVehicle.range.chargetrip_range.worst);
+            chargingStationsStore.set(chargingStations);
+
 
             chargingStations.forEach((station: any) => {
                 const marker = new Marker({color: colors.green[400]}).setLngLat(station).addTo(map);
@@ -108,7 +110,7 @@
     onDestroy(() => {
         map.remove();
         chargingStationMarkers.forEach((marker:any) => marker.remove());
-
+        chargingStationsStore.set([]);
     });
 
 </script>

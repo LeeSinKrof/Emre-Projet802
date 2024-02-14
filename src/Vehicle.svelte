@@ -40,13 +40,15 @@
                 time,
                 speed,
                 power
-            }}
+            }, i}
+                {#if i === 0}
                     <li>Standard: {standard}</li>
                     <li>Max Electric Power: {max_electric_power}</li>
                     <li>Time: {time}</li>
                     <li>Speed: {speed}</li>
                     <li>Power: {power}</li>
-                    <li>Range: {selectedVehicle.range.chargetrip_range.worst}</li>
+                    <li>Range: {selectedVehicle.range.chargetrip_range.best}</li>
+                {/if}
             {/each}
         </ul>
     </div>

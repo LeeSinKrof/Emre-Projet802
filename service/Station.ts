@@ -1,10 +1,10 @@
 import axios from 'axios';
 
-function calculateDistance(coordA: [number, number], coordB: [number, number]): number {
+export function calculateDistance(coord1: [number, number], coord2: [number, number]): number {
     const earthRadiusKm = 6371;
 
-    const [lat1, lon1] = coordA;
-    const [lat2, lon2] = coordB;
+    const [lat1, lon1] = coord1;
+    const [lat2, lon2] = coord2;
 
     const dLat = degToRad(lat2 - lat1);
     const dLon = degToRad(lon2 - lon1);
@@ -33,15 +33,15 @@ export async function getChargingStationsAtIntervals(routeCoordinates: [number, 
     let distanceAccumulator = 0;
 
     for (let i = 1; i < routeCoordinates.length; i++) {
-        const coordA = routeCoordinates[i - 1];
-        const coordB = routeCoordinates[i];
+        const coord1 = routeCoordinates[i - 1];
+        const coord2 = routeCoordinates[i];
 
-        const distanceBetweenPoints = calculateDistance(coordA, coordB);
+        const distanceBetweenPoints = calculateDistance(coord1, coord2);
 
         distanceAccumulator += distanceBetweenPoints;
 
         if (distanceAccumulator >= intervalKilometers) {
-            const query = `within_distance(geo_point_borne, GEOM'POINT(${coordA[0]} ${coordA[1]})', ${30000}m)`;
+            const query = `within_distance(geo_point_borne, GEOM'POINT(${coord1[0]} ${coord2[1]})', ${30000}m)`;
             const url = `https://odre.opendatasoft.com/api/explore/v2.1/catalog/datasets/bornes-irve/records?limit=1&where=${encodeURIComponent(query)}`;
 
             const bornesResponse = await axios.get(url);
