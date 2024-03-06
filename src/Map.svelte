@@ -6,9 +6,7 @@
 
 
     import colors from "tailwindcss/colors";
-    import {getDirections} from "../service/Direction";
-    import {getChargingStationsAtIntervals} from "../service/Station";
-    import {chargingStationsStore} from "../service/store";
+    import Service from "../service/Service";
 
     let map: any;
     let mapContainer: any;
@@ -64,9 +62,8 @@
             endCityMarker.setLngLat(selectedEndCity.geometry.coordinates);
 
 
-            const directionsData = await getDirections({coord1: startMarkerCoord, coord2: endMarkerCoord});
+            const directionsData = await Service.getDirections({coord1: startMarkerCoord, coord2: endMarkerCoord});
 
-            console.log(directionsData);
 
             const existingLayer = map.getLayer('directions_route');
             if (!existingLayer) {
@@ -86,16 +83,13 @@
                 directionsRouteSource.setData({type: 'Feature', geometry: directionsData.features[0].geometry});
                 const bounds = new maptilersdk.LngLatBounds(startMarkerCoord, endMarkerCoord);
                 map.fitBounds(bounds, {padding: 10});
-            } else {
-                console.warn("Directions route source not found.");
             }
 
 
             chargingStationMarkers.forEach((marker: any) => marker.remove());
             chargingStationMarkers = [];
 
-            chargingStations = await getChargingStationsAtIntervals(directionsData.features[0].geometry.coordinates, selectedVehicle.range.chargetrip_range.worst);
-            chargingStationsStore.set(chargingStations);
+            chargingStations = await Service.getStations(directionsData.features[0].geometry.coordinates, selectedVehicle.range.chargetrip_range.best);
 
 
             chargingStations.forEach((station: any) => {
@@ -110,7 +104,6 @@
     onDestroy(() => {
         map.remove();
         chargingStationMarkers.forEach((marker:any) => marker.remove());
-        chargingStationsStore.set([]);
     });
 
 </script>

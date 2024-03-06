@@ -2,13 +2,11 @@
     import {onMount} from 'svelte';
     import Map from "./Map.svelte";
     import Icon from '@iconify/svelte';
-    import {getGeoCode} from "../service/Geocode";
     import Vehicle from "./Vehicle.svelte";
     import Input from "./Input.svelte";
-    import {getDirections} from "../service/Direction";
     import {success, warning, error} from "./notyf";
     import axios from 'axios';
-    import {getVehicleList} from "../service/Vehicle";
+    import Service from "../service/Service";
 
     let vehicleList: any = [];
     let selectedVehicle: any = null;
@@ -22,6 +20,7 @@
     let isSidebarExpanded = false;
     let distanceCity: number = 0;
     let travelTimeCity: number = 0;
+    let travelTimeCityMinutes: number = 0;
 
 
 
@@ -35,11 +34,13 @@
         showCityList = true;
     }
 
-    function selectVehicle(vehicle: any) {
+    function selectVehicle(vehicle: any) : boolean {
         if (selectedVehicle && selectedVehicle.id === vehicle.id) {
             selectedVehicle = null;
+            return true;
         } else {
             selectedVehicle = vehicle;
+            return false;
         }
     }
 
@@ -66,10 +67,10 @@
         let searchData;
 
         if (inputType === 'start') {
-            searchData = await getGeoCode(searchStart);
+            searchData = await Service.getGeoCode(searchStart);
             searchResultsStart = searchData;
         } else if (inputType === 'end') {
-            searchData = await getGeoCode(searchEnd);
+            searchData = await Service.getGeoCode(searchEnd);
             searchResultsEnd = searchData;
         }
     }
@@ -88,7 +89,7 @@
         const startCoordinates = selectedStartCity.geometry.coordinates;
         const endCoordinates = selectedEndCity.geometry.coordinates;
 
-        const directions = await getDirections({coord1: startCoordinates, coord2: endCoordinates});
+        const directions = await Service.getDirections({coord1: startCoordinates, coord2: endCoordinates});
 
         const distance = directions ? (directions.features[0].properties.summary.distance) / 1000 : 0;
         distanceCity = Math.trunc(distance);
@@ -122,25 +123,24 @@
 
             if (resultElements.length > 0) {
                 const travelTime = parseFloat(resultElements[0].textContent);
-                travelTimeCity = travelTime;
-                console.log('Travel Time:', travelTime);
+                const hours = Math.floor(travelTime);
+                const minutes = Math.round((travelTime - hours) * 60);
+
+                travelTimeCity = hours;
+                travelTimeCityMinutes = minutes;
                 success("Calcul de l'itinéraire réussi.");
 
             } else {
-                console.error('Error parsing SOAP response: calculate_travel_timeResult not found.');
                 error("Erreur lors du calcul de l'itinéraire.");
 
             }
         } catch (e) {
-            console.error('Error calculating travel time:', e);
             error("Erreur lors du calcul de l'itinéraire.");
         }
     }
 
     onMount(async () => {
-        //vehicleList = await getVehicleList();
-        console.log(vehicleList);
-
+        //vehicleList = await Service.getVehicleList();
     });
 </script>
 
@@ -184,6 +184,7 @@
             calculateItinerary="{calculateItineraire}"
             distance="{distanceCity}"
             travelTime="{travelTimeCity}"
+            travelTimeMinutes="{travelTimeCityMinutes}"
     />
 
     <Map selectedStartCity={selectedStartCity} selectedEndCity={selectedEndCity} selectedVehicle={selectedVehicle}

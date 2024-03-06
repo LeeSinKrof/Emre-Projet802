@@ -2,7 +2,7 @@
     import Icon from "@iconify/svelte";
 
     export let vehicle: any;
-    export let onSelect: () => void;
+    export let onSelect: () => boolean;
     export let selectedVehicle: any;
 
     let showDetails = false;

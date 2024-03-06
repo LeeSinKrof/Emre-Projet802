@@ -14,6 +14,8 @@
 
     export let travelTime: number;
 
+    export let travelTimeMinutes: number;
+
 
 </script>
 
@@ -84,13 +86,15 @@
         </div>
     </div>
 
+
     <div class="flex flex-row items-start justify-center p-4 z-10 ml-4 space-x-4 bg-white text-black">
         <p class="">Distance : {distance} km</p>
-        {#if travelTime}
-            <p class="">Temps de trajet : {travelTime} heures</p>
+        {#if travelTime >= 1}
+            <p class="">Temps de trajet : {travelTime} heures et {travelTimeMinutes} minutes</p>
+        {:else}
+            <p class="">Temps de trajet : {travelTimeMinutes} minutes</p>
         {/if}
     </div>
-
 
 </div>
 
