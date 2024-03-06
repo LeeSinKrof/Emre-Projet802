@@ -13,6 +13,9 @@ dependencies:
   '@urql/core':
     specifier: ^4.2.2
     version: 4.2.2(graphql@16.8.1)
+  axios:
+    specifier: ^1.6.7
+    version: 1.6.7(debug@4.3.4)
   cors:
     specifier: ^2.8.5
     version: 2.8.5
@@ -39,7 +42,7 @@ dependencies:
     version: 1.12.1
   soap:
     specifier: ^1.0.0
-    version: 1.0.0(axios@0.27.2)
+    version: 1.0.0(axios@1.6.7)
   subscriptions-transport-ws:
     specifier: ^0.11.0
     version: 0.11.0(graphql@16.8.1)
@@ -1880,15 +1883,6 @@ packages:
       - debug
     dev: false
 
-  /axios@0.27.2:
-    resolution: {integrity: sha512-t+yRIyySRTp/wua5xEr+z1q60QmLq8ABsS5O9Me1AsE5dfKqgnCFzwiCZZ/cGNd1lq4/7akDWMxdhVlucjmnOQ==}
-    dependencies:
-      follow-redirects: 1.15.5(debug@4.3.4)
-      form-data: 4.0.0
-    transitivePeerDependencies:
-      - debug
-    dev: false
-
   /axios@1.6.7(debug@4.3.4):
     resolution: {integrity: sha512-/hDJGff6/c7u0hDkvkGxR/oy6CbCs8ziCsC7SqmhjfozqiJGc8Z11wrv9z9lYfY4K8l+H9TpjcMDX0xOZmx+RA==}
     dependencies:
@@ -3587,13 +3581,13 @@ packages:
     resolution: {integrity: sha512-hNj1/oZ7ygsfmPZ7ZfN5MUBRoGg1gtpnImuJBgLO0ljQ67DtJuiQaiYdS4lUA6s0KCwnPhGivtC/WRwIZLkHyg==}
     dev: false
 
-  /soap@1.0.0(axios@0.27.2):
+  /soap@1.0.0(axios@1.6.7):
     resolution: {integrity: sha512-GB5GuKjWFtAPP0IaM4tKUvdF4dFlaz4iujLPg0DsCy9qAAgm5/g+SI+P9e6igWWwXZ74CC5Uo0VEEz8lte0CJA==}
     engines: {node: '>=14.0.0'}
     peerDependencies:
       axios: ^0.27.2
     dependencies:
-      axios: 0.27.2
+      axios: 1.6.7(debug@4.3.4)
       axios-ntlm: 1.4.2(debug@4.3.4)
       debug: 4.3.4
       formidable: 3.5.1

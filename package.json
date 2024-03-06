@@ -28,6 +28,7 @@
     "@maptiler/sdk": "^1.2.1",
     "@turf/turf": "^6.5.0",
     "@urql/core": "^4.2.2",
+    "axios": "^1.6.7",
     "cors": "^2.8.5",
     "fade": "^0.2.0",
     "fastify": "^4.25.2",
