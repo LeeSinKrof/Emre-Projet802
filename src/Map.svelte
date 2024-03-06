@@ -91,6 +91,8 @@
 
             chargingStations = await Service.getStations(directionsData.features[0].geometry.coordinates, selectedVehicle.range.chargetrip_range.best);
 
+            chargingStations = chargingStations.slice(1,-1);
+
 
             chargingStations.forEach((station: any) => {
                 const marker = new Marker({color: colors.green[400]}).setLngLat(station).addTo(map);

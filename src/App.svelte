@@ -140,7 +140,7 @@
     }
 
     onMount(async () => {
-        //vehicleList = await Service.getVehicleList();
+        vehicleList = await Service.getVehicleList();
     });
 </script>
 
