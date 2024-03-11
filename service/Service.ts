@@ -2,7 +2,7 @@ import axios, {type AxiosInstance} from 'axios';
 
 
 export const restAPI: AxiosInstance = axios.create({
-    baseURL: 'http://127.0.0.1:80',
+    baseURL: 'https://emre-projet802-rapi.azurewebsites.net',
 });
 
 class Service {
