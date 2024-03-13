@@ -111,7 +111,7 @@
             </soapenv:Envelope>`;
 
         try {
-            const soapResponse = await axios.post('http://localhost:8000', xml, {
+            const soapResponse = await axios.post('https://projet802-soap.azurewebsites.net/', xml, {
                 headers: {
                     'Content-Type': 'text/xml',
                 },
