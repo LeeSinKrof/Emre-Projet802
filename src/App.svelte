@@ -5,8 +5,8 @@
     import Vehicle from "./Vehicle.svelte";
     import Input from "./Input.svelte";
     import {success, warning, error} from "./notyf";
-    import axios from 'axios';
     import Service from "../service/Service";
+    import {SoapService} from "../service/SoapService";
 
     let vehicleList: any = [];
     let selectedVehicle: any = null;
@@ -96,46 +96,19 @@
 
         const autonomy = selectedVehicle.range.chargetrip_range.best;
         const chargingTime = selectedVehicle.connectors[0].time / 60;
+        const maxSpeed = Math.floor(selectedVehicle.range.chargetrip_range.best / 2);
 
-        const xml =  `
-            <soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/"
-                               xmlns:web="travel">
-               <soapenv:Header/>
-               <soapenv:Body>
-                  <web:calculate_travel_time>
-                     <web:distance>${distance}</web:distance>
-                     <web:autonomy>${autonomy}</web:autonomy>
-                     <web:charging_time>${chargingTime}</web:charging_time>
-                  </web:calculate_travel_time>
-               </soapenv:Body>
-            </soapenv:Envelope>`;
 
         try {
-            const soapResponse = await axios.post('https://projet802-soap.azurewebsites.net', xml, {
-                headers: {
-                    'Content-Type': 'text/xml',
-                },
-            });
+            const travelTime = await SoapService.calculateTravelTimeSoap(distance, autonomy, chargingTime, maxSpeed);
+            const hours = Math.floor(travelTime);
+            const minutes = Math.round((travelTime - hours) * 60);
 
-            const parser = new DOMParser();
-            const xmlDoc: any = parser.parseFromString(soapResponse.data, 'text/xml');
-            const resultElements = xmlDoc.getElementsByTagNameNS('travel', 'calculate_travel_timeResult');
-
-            if (resultElements.length > 0) {
-                const travelTime = parseFloat(resultElements[0].textContent);
-                const hours = Math.floor(travelTime);
-                const minutes = Math.round((travelTime - hours) * 60);
-
-                travelTimeCity = hours;
-                travelTimeCityMinutes = minutes;
-                success("Calcul de l'itinéraire réussi.");
-
-            } else {
-                error("Erreur lors du calcul de l'itinéraire.");
-
-            }
-        } catch (e) {
-            error("Erreur lors du calcul de l'itinéraire.");
+            travelTimeCity = hours;
+            travelTimeCityMinutes = minutes;
+            success("Calcul de l'itinéraire réussi.");
+        } catch (e: any) {
+            error("Erreur lors du calcul de l'itinéraire : " + e.message);
         }
     }
 

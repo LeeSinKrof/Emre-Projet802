@@ -36,18 +36,16 @@
         <ul>
             {#each selectedVehicle.connectors as {
                 standard,
-                max_electric_power,
                 time,
                 speed,
                 power
             }, i}
                 {#if i === 0}
                     <li>Standard: {standard}</li>
-                    <li>Max Electric Power: {max_electric_power}</li>
-                    <li>Time: {time}</li>
-                    <li>Speed: {speed}</li>
-                    <li>Power: {power}</li>
-                    <li>Range: {selectedVehicle.range.chargetrip_range.best}</li>
+                    <li>Temps: {Math.floor(time / 60)} heures</li>
+                    <li>Puissance: {power}</li>
+                    <li>Autonomie: {selectedVehicle.range.chargetrip_range.best} km</li>
+                    <li>MaxSpeed: {Math.floor(selectedVehicle.range.chargetrip_range.best / 2)} km/h</li>
                 {/if}
             {/each}
         </ul>
