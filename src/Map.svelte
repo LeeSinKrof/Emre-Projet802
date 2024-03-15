@@ -3,6 +3,7 @@
     import {Map, MapStyle, config, Marker} from '@maptiler/sdk';
     import "@maptiler/sdk/dist/maptiler-sdk.css";
     import * as maptilersdk from '@maptiler/sdk';
+    import {SoapService} from "../service/SoapService";
 
 
     import colors from "tailwindcss/colors";
@@ -92,6 +93,9 @@
             chargingStations = await Service.getStations(directionsData.features[0].geometry.coordinates, selectedVehicle.range.chargetrip_range.best);
 
             chargingStations = chargingStations.slice(1,-1);
+
+            await SoapService.getNumberOfStations(chargingStations.length);
+
 
 
             chargingStations.forEach((station: any) => {

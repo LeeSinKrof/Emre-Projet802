@@ -45,7 +45,7 @@
                     <li>Temps: {Math.floor(time / 60)} heures</li>
                     <li>Puissance: {power}</li>
                     <li>Autonomie: {selectedVehicle.range.chargetrip_range.best} km</li>
-                    <li>MaxSpeed: {Math.floor(selectedVehicle.range.chargetrip_range.best / 2)} km/h</li>
+                    <li>MaxSpeed: {Math.floor(selectedVehicle.range.chargetrip_range.best / 3)} km/h</li>
                 {/if}
             {/each}
         </ul>

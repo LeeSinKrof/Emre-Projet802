@@ -94,13 +94,12 @@
         const distance = directions ? (directions.features[0].properties.summary.distance) / 1000 : 0;
         distanceCity = Math.trunc(distance);
 
-        const autonomy = selectedVehicle.range.chargetrip_range.best;
         const chargingTime = selectedVehicle.connectors[0].time / 60;
-        const maxSpeed = Math.floor(selectedVehicle.range.chargetrip_range.best / 2);
+        const maxSpeed = Math.floor(selectedVehicle.range.chargetrip_range.best / 3);
 
 
         try {
-            const travelTime = await SoapService.calculateTravelTimeSoap(distance, autonomy, chargingTime, maxSpeed);
+            const travelTime = await SoapService.calculateTravelTimeSoap(distance, chargingTime, maxSpeed);
             const hours = Math.floor(travelTime);
             const minutes = Math.round((travelTime - hours) * 60);
 
@@ -108,7 +107,7 @@
             travelTimeCityMinutes = minutes;
             success("Calcul de l'itinéraire réussi.");
         } catch (e: any) {
-            error("Erreur lors du calcul de l'itinéraire : " + e.message);
+            error("Erreur lors du calcul de l'itinéraire.");
         }
     }
 

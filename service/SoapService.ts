@@ -2,10 +2,21 @@ import axios from 'axios';
 
 const soapUrl = 'http://localhost:8000';
 
+let numberOfStations: number = 0;
+
+
 
 export class SoapService {
 
-    static async calculateTravelTimeSoap(distance: number, autonomy: number, chargingTime: number, maxSpeed:number): Promise<number> {
+    static async getNumberOfStations(stations: number): Promise<number> {
+        numberOfStations = stations;
+        return numberOfStations;
+    }
+
+
+    static async calculateTravelTimeSoap(distance: number, chargingTime: number, maxSpeed:number): Promise<number> {
+
+
         const xml = `
             <soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/"
                                xmlns:web="travel">
@@ -13,9 +24,9 @@ export class SoapService {
                <soapenv:Body>
                   <web:calculate_travel_time>
                      <web:distance>${distance}</web:distance>
-                     <web:autonomy>${autonomy}</web:autonomy>
                      <web:charging_time>${chargingTime}</web:charging_time>
                      <web:max_speed>${maxSpeed}</web:max_speed>
+                     <web:number_of_stations>${numberOfStations}</web:number_of_stations>
                   </web:calculate_travel_time>
                </soapenv:Body>
             </soapenv:Envelope>`;
