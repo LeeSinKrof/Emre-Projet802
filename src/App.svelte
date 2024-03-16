@@ -94,14 +94,15 @@
         const distance = directions ? (directions.features[0].properties.summary.distance) / 1000 : 0;
         distanceCity = Math.trunc(distance);
 
-        const chargingTime = selectedVehicle.connectors[0].time / 60;
-        const maxSpeed = Math.floor(selectedVehicle.range.chargetrip_range.best / 3);
+        const duration = directions ? (directions.features[0].properties.summary.duration) / 60 : 0;
+
+        const chargingTime = selectedVehicle.connectors[0].time;
 
 
         try {
-            const travelTime = await SoapService.calculateTravelTimeSoap(distance, chargingTime, maxSpeed);
-            const hours = Math.floor(travelTime);
-            const minutes = Math.round((travelTime - hours) * 60);
+            const travelTime = await SoapService.calculateTravelTimeSoap(duration, chargingTime);
+            const hours = Math.floor(travelTime / 60);
+            const minutes = Math.round(travelTime % 60);
 
             travelTimeCity = hours;
             travelTimeCityMinutes = minutes;

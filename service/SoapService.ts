@@ -14,7 +14,7 @@ export class SoapService {
     }
 
 
-    static async calculateTravelTimeSoap(distance: number, chargingTime: number, maxSpeed:number): Promise<number> {
+    static async calculateTravelTimeSoap(duration: number, chargingTime: number): Promise<number> {
 
 
         const xml = `
@@ -23,9 +23,8 @@ export class SoapService {
                <soapenv:Header/>
                <soapenv:Body>
                   <web:calculate_travel_time>
-                     <web:distance>${distance}</web:distance>
+                     <web:duration>${duration}</web:duration>
                      <web:charging_time>${chargingTime}</web:charging_time>
-                     <web:max_speed>${maxSpeed}</web:max_speed>
                      <web:number_of_stations>${numberOfStations}</web:number_of_stations>
                   </web:calculate_travel_time>
                </soapenv:Body>
