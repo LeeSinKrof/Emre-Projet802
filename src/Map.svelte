@@ -3,11 +3,11 @@
     import {Map, MapStyle, config, Marker} from '@maptiler/sdk';
     import "@maptiler/sdk/dist/maptiler-sdk.css";
     import * as maptilersdk from '@maptiler/sdk';
-    import {SoapService} from "../service/SoapService";
 
 
     import colors from "tailwindcss/colors";
     import Service from "../service/Service";
+    import {Utils} from "../service/Utils";
 
     let map: any;
     let mapContainer: any;
@@ -15,6 +15,7 @@
     let endCityMarker: any;
     let chargingStationMarkers: any[] = [];
     let chargingStations: any[] = [];
+    let distanceRemaining: number;
 
     export let selectedStartCity: any;
     export let selectedEndCity: any;
@@ -94,7 +95,7 @@
 
             chargingStations = chargingStations.slice(1,-1);
 
-            await SoapService.getNumberOfStations(chargingStations.length);
+            await Utils.getNumberOfStations(chargingStations.length);
 
 
 
@@ -102,6 +103,14 @@
                 const marker = new Marker({color: colors.green[400]}).setLngLat(station).addTo(map);
                 chargingStationMarkers.push(marker);
             });
+
+            if (chargingStations.length > 0) {
+                const lastStation = chargingStations[chargingStations.length - 1];
+                const lastStationEndDistance = await Service.getDirections({ coord1: lastStation, coord2: endMarkerCoord });
+                distanceRemaining = lastStationEndDistance.features[0].properties.summary.distance / 1000;
+                await Utils.getDistanceRemaining(distanceRemaining);
+            }
+
         }
 
 

@@ -1,20 +1,12 @@
 import axios from 'axios';
+import {distanceRemaining, numberOfStations} from "./Utils";
 
 const soapUrl = 'http://localhost:8000';
 
-let numberOfStations: number = 0;
-
-
-
 export class SoapService {
 
-    static async getNumberOfStations(stations: number): Promise<number> {
-        numberOfStations = stations;
-        return numberOfStations;
-    }
 
-
-    static async calculateTravelTimeSoap(duration: number, chargingTime: number): Promise<number> {
+    static async calculateTravelTimeSoap(duration: number, chargingTime: number, autonomy: number): Promise<number> {
 
 
         const xml = `
@@ -26,6 +18,8 @@ export class SoapService {
                      <web:duration>${duration}</web:duration>
                      <web:charging_time>${chargingTime}</web:charging_time>
                      <web:number_of_stations>${numberOfStations}</web:number_of_stations>
+                        <web:distance_remaining>${distanceRemaining}</web:distance_remaining>
+                        <web:autonomy>${autonomy}</web:autonomy>
                   </web:calculate_travel_time>
                </soapenv:Body>
             </soapenv:Envelope>`;

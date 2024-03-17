@@ -98,9 +98,11 @@
 
         const chargingTime = selectedVehicle.connectors[0].time;
 
+        const autonomy = selectedVehicle.range.chargetrip_range.best;
+
 
         try {
-            const travelTime = await SoapService.calculateTravelTimeSoap(duration, chargingTime);
+            const travelTime = await SoapService.calculateTravelTimeSoap(duration, chargingTime, autonomy);
             const hours = Math.floor(travelTime / 60);
             const minutes = Math.round(travelTime % 60);
 
