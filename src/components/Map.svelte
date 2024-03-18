@@ -6,8 +6,11 @@
 
 
     import colors from "tailwindcss/colors";
-    import Service from "../service/Service";
-    import {Utils} from "../service/Utils";
+    import Service from "../../service/Service";
+    import {Utils} from "../../service/Utils";
+
+    config.apiKey = 'jVmLD1SYxCeMk5vViw0q';
+
 
     let map: any;
     let mapContainer: any;
@@ -21,7 +24,6 @@
     export let selectedEndCity: any;
     export let selectedVehicle: any;
 
-    config.apiKey = 'jVmLD1SYxCeMk5vViw0q';
 
 
 

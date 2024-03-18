@@ -1,9 +1,9 @@
 <script lang="ts">
     import {onMount} from 'svelte';
-    import Map from "./Map.svelte";
+    import Map from "./components/Map.svelte";
     import Icon from '@iconify/svelte';
-    import Vehicle from "./Vehicle.svelte";
-    import Input from "./Input.svelte";
+    import Vehicle from "./components/Vehicle.svelte";
+    import Input from "./components/Input.svelte";
     import {success, warning, error} from "./notyf";
     import Service from "../service/Service";
     import {SoapService} from "../service/SoapService";
