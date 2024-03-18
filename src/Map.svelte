@@ -21,7 +21,7 @@
     export let selectedEndCity: any;
     export let selectedVehicle: any;
 
-    config.apiKey = process.env.MAP_KEY?? 'jVmLD1SYxCeMk5vViw0q';
+    config.apiKey = process.env.MAP_KEY;
 
 
 
