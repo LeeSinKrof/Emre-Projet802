@@ -75,7 +75,7 @@
         }
     }
 
-    async function calculateItineraire() {
+    async function calculateItinerary() {
         if (!selectedStartCity || !selectedEndCity) {
             warning("Veuillez sélectionner les villes de départ et d'arrivée.");
             return;
@@ -156,7 +156,7 @@
             bind:searchResultsEnd={searchResultsEnd}
             selectCity={selectCity}
             searchInput={searchInput}
-            calculateItinerary="{calculateItineraire}"
+            calculateItinerary="{calculateItinerary}"
             distance="{distanceCity}"
             travelTime="{travelTimeCity}"
             travelTimeMinutes="{travelTimeCityMinutes}"

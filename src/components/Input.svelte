@@ -46,8 +46,6 @@
                     {/each}
                 </div>
             {/if}
-
-
         </div>
 
         <!-- Search End Input -->
@@ -75,9 +73,8 @@
                     {/each}
                 </div>
             {/if}
-
-
         </div>
+
         <div class="mt-4">
             <button on:click={calculateItinerary}
                     class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
