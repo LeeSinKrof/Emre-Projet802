@@ -1,4 +1,4 @@
-# Projet : Info802 - Front
+# Projet : Info802 - Front - CEYLAN - Emre
 
 ## Installation
 
@@ -13,6 +13,12 @@ $ npm install
 ```bash
 $ npm run dev
 ```
+
+## Accès au site
+
+Le site est accessible à l'adresse suivante :
+
+https://emre-projet802.pages.dev
 
 
 ## Technologies utilisées
