@@ -10,6 +10,7 @@
     import {Utils} from "../../service/Utils";
 
     config.apiKey = import.meta.env.VITE_MAP_KEY;
+    console.log(config.apiKey);
 
 
     let map: any;
