@@ -9,7 +9,7 @@
     import Service from "../../service/Service";
     import {Utils} from "../../service/Utils";
 
-    config.apiKey = 'jVmLD1SYxCeMk5vViw0q';
+    config.apiKey = import.meta.env.VITE_MAP_KEY;
 
 
     let map: any;
